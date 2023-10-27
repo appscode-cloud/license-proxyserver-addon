@@ -1,0 +1,21 @@
+apiVersion: addon.open-cluster-management.io/v1alpha1
+kind: ClusterManagementAddOn
+metadata:
+  name: license-proxyserver-addon-manager
+  annotations:
+    addon.open-cluster-management.io/lifecycle: "addon-manager"
+spec:
+  addOnMeta:
+    displayName: {{ .Chart.Name }}
+    description: {{ .Chart.Description }}
+  installStrategy:
+    type: Placements
+    placements:
+      - name: license-proxyserver-global-placement
+        namespace: open-cluster-management
+  supportedConfigs:
+    - group: licenses.appscode.com.open-cluster-management.io
+      resource: licenseproxyserverconfigs
+      defaultConfig:
+        name: licenseproxyserverconfig
+        namespace: open-cluster-management

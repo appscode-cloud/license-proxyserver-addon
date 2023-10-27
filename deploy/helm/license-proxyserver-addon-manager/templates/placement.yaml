@@ -1,0 +1,8 @@
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: license-proxyserver-global-placement
+  namespace: open-cluster-management
+spec:
+  clusterSets:
+    - global

@@ -1,0 +1,27 @@
+# permissions for end users to view licenseproxyserverconfigs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: licenseproxyserverconfig-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: api
+    app.kubernetes.io/part-of: api
+    app.kubernetes.io/managed-by: kustomize
+  name: licenseproxyserverconfig-viewer-role
+rules:
+- apiGroups:
+  - licenses.appscode.com.open-cluster-management.io
+  resources:
+  - licenseproxyserverconfigs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - licenses.appscode.com.open-cluster-management.io
+  resources:
+  - licenseproxyserverconfigs/status
+  verbs:
+  - get

@@ -1,0 +1,32 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - licenses.appscode.com.open-cluster-management.io
+  resources:
+  - licenseproxyserverconfigs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - licenses.appscode.com.open-cluster-management.io
+  resources:
+  - licenseproxyserverconfigs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - licenses.appscode.com.open-cluster-management.io
+  resources:
+  - licenseproxyserverconfigs/status
+  verbs:
+  - get
+  - patch
+  - update
