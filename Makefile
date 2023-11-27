@@ -56,6 +56,10 @@ docker-build: ## Build docker image with the manager.
 docker-push: docker-build ## Build and Push docker image with the manager.
 	docker push ${IMG}
 
+.PHONY: docker-push-to-kind
+docker-push-to-kind: docker-build ## Build and Push docker image with the manager.
+	kind load docker-image ${IMG} --name=hub
+
 .PHONY: deploy-crd
 deploy-crd: ## Apply flux config crd
 	cd api/ && make manifests
@@ -63,7 +67,7 @@ deploy-crd: ## Apply flux config crd
 
 .PHONY: deploy-helm
 deploy-helm:
-	make docker-push
+	make docker-push-to-kind
 	make undeploy-helm --ignore-errors
 	make deploy-crd --ignore-errors
 	cd deploy/helm/license-proxyserver-addon-manager && helm install license-proxyserver-addon-manager . --namespace kubeops --create-namespace

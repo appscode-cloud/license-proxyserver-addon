@@ -9,4 +9,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: license-proxyserver-addon-manager
-    namespace: open-cluster-management
+    namespace: license-proxyserver-addon
