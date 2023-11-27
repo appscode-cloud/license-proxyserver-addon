@@ -11,11 +11,11 @@ spec:
   installStrategy:
     type: Placements
     placements:
-      - name: license-proxyserver-global-placement
-        namespace: open-cluster-management
+      - name: global
+        namespace: license-proxyserver-addon
   supportedConfigs:
-    - group: licenses.appscode.com.open-cluster-management.io
-      resource: licenseproxyserverconfigs
+    - group: ""
+      resource: secrets
       defaultConfig:
-        name: licenseproxyserverconfig
-        namespace: open-cluster-management
+        name: license-proxyserver-config
+        namespace: license-proxyserver-addon
