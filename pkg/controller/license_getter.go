@@ -23,6 +23,14 @@ import (
 	"strings"
 )
 
+const (
+	ClusterClaimClusterID             = "id.k8s.io"
+	ClusterClaimLicense               = "licenses.appscode.com"
+	LicenseSecret                     = "license-proxyserver-licenses"
+	LicenseProxyServerHelmReleaseName = "license-proxyserver"
+	LicenseProxyServerNamespace       = "kubeops"
+)
+
 func NewLicenseReconciler(hubClient client.Client) *LicenseReconciler {
 	return &LicenseReconciler{
 		HubClient: hubClient,
@@ -54,14 +62,14 @@ func (r *LicenseReconciler) Reconcile(ctx context.Context, request reconcile.Req
 
 	if len(managed.Status.ClusterClaims) > 1 {
 		cc := ocm.ClusterClaim{}
-		err := r.HubClient.Get(context.TODO(), client.ObjectKey{Name: "id.k8s.io"}, &cc)
+		err := r.HubClient.Get(context.TODO(), client.ObjectKey{Name: ClusterClaimClusterID}, &cc)
 		if err != nil {
 			return reconcile.Result{}, err
 		}
 
 		cid := cc.Spec.Value
 
-		err = r.HubClient.Get(context.TODO(), client.ObjectKey{Name: "licenses.appscode.com"}, &cc)
+		err = r.HubClient.Get(context.TODO(), client.ObjectKey{Name: ClusterClaimLicense}, &cc)
 		if err != nil {
 			return reconcile.Result{}, err
 		}
@@ -79,8 +87,8 @@ func (r *LicenseReconciler) Reconcile(ctx context.Context, request reconcile.Req
 func licenseHelper(ctx context.Context, HubClient client.Client, cid string, features []string, clusterName string) error {
 	lps := v2beta1.HelmRelease{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "license-proxyserver",
-			Namespace: "kubeops",
+			Name:      LicenseProxyServerHelmReleaseName,
+			Namespace: LicenseProxyServerNamespace,
 		},
 	}
 
@@ -99,7 +107,7 @@ func licenseHelper(ctx context.Context, HubClient client.Client, cid string, fea
 		// get secret
 		sec := v1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "license-proxyserver-licenses",
+				Name:      LicenseSecret,
 				Namespace: clusterName,
 			},
 		}

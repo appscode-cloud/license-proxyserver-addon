@@ -110,11 +110,3 @@ func agentHealthProber() *agentapi.HealthProber {
 		},
 	}
 }
-
-func Copy(src interface{}, dst interface{}) error {
-	srcYAML, err := yaml.Marshal(src)
-	if err != nil {
-		return err
-	}
-	return yaml.Unmarshal(srcYAML, dst)
-}
