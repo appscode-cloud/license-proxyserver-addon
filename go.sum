@@ -240,8 +240,8 @@ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1
 github.com/jstemmer/go-junit-report v0.9.1/go.mod h1:Brl9GWCQeLvo8nXZwPNNblvFj/XSXhF0NWZEnDohbsk=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
-github.com/kluster-manager/addon-framework v0.8.1-0.20231128085803-72e3ca236234 h1:HoAVG0rn8KjuxEcBDz9J2rGibjGKUW5b0+h6wzXRMiQ=
-github.com/kluster-manager/addon-framework v0.8.1-0.20231128085803-72e3ca236234/go.mod h1:aj97pgpGJ0/LpQzBVtU2oDFqqIiZLOPnsjLKG/sVkFw=
+github.com/kluster-manager/addon-framework v0.8.1-0.20231128110641-c37ccbb8ff80 h1:DG2+yhshPordgluBt2A0/Tn92elue9518ypy88v7TKQ=
+github.com/kluster-manager/addon-framework v0.8.1-0.20231128110641-c37ccbb8ff80/go.mod h1:aj97pgpGJ0/LpQzBVtU2oDFqqIiZLOPnsjLKG/sVkFw=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
