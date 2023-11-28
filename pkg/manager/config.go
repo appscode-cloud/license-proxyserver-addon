@@ -5,8 +5,9 @@ import (
 	"fmt"
 	licensev1alpha1 "github.com/RokibulHasan7/license-proxyserver-addon/api/api/v1alpha1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"gopkg.in/yaml.v2"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/rest"
 	apiregistrationv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
@@ -29,6 +30,10 @@ const (
 
 	// LicenseProxyServerConfigGroup is the group name for LicenseProxyServerConfig objects.
 	LicenseProxyServerConfigGroup = "licenses.appscode.com.open-cluster-management.io"
+
+	ConfigName = "license-proxyserver-config"
+
+	ConfigNamespace = "license-proxyserver-addon"
 )
 
 var (
@@ -47,30 +52,23 @@ func getKubeClient(kubeConfig *rest.Config) (client.Client, error) {
 
 func GetConfigValues(kc client.Client) addonfactory.GetValuesFunc {
 	return func(cluster *clusterv1.ManagedCluster, addon *v1alpha1.ManagedClusterAddOn) (addonfactory.Values, error) {
-		overrideValues := addonfactory.Values{}
-
-		//for _, refConfig := range addon.Status.ConfigReferences {
-		//	if refConfig.ConfigGroupResource.Group != LicenseProxyServerConfigGroup ||
-		//		refConfig.ConfigGroupResource.Resource != LicenseProxyServerConfigResource {
-		//		continue
-		//	}
-
-		lcConfig := licensev1alpha1.LicenseProxyServerConfig{}
-		keyType := types.NamespacedName{Name: "licenseproxyserverconfig", Namespace: "open-cluster-management"}
-
-		if err := kc.Get(context.TODO(), keyType, &lcConfig); err != nil {
+		lcConfig := v1.Secret{}
+		if err := kc.Get(context.TODO(), client.ObjectKey{Name: ConfigName, Namespace: ConfigNamespace}, &lcConfig); err != nil {
 			return nil, err
 		}
 
-		lcConfigSpec := lcConfig.Spec
-		values, err := addonfactory.JsonStructToValues(lcConfigSpec)
+		lcConfigVal := lcConfig.Data["values.yaml"]
+
+		var decodedValues map[interface{}]interface{}
+		err := yaml.Unmarshal([]byte(lcConfigVal), &decodedValues)
 		if err != nil {
 			return nil, err
 		}
-		overrideValues = addonfactory.MergeValues(overrideValues, values)
-		//}
 
-		return overrideValues, nil
+		values := make(map[string]interface{})
+		_ = Copy(decodedValues, &values)
+
+		return values, nil
 	}
 }
 
@@ -112,4 +110,12 @@ func agentHealthProber() *agentapi.HealthProber {
 			},
 		},
 	}
+}
+
+func Copy(src interface{}, dst interface{}) error {
+	srcYAML, err := yaml.Marshal(src)
+	if err != nil {
+		return err
+	}
+	return yaml.Unmarshal(srcYAML, dst)
 }

@@ -1,6 +1,6 @@
 # Image URL to use all building/pushing image targets
-IMG ?= ghcr.io/kluster-manager/license-proxyserver-addon:latest
-
+#IMG ?= ghcr.io/kluster-manager/license-proxyserver-addon:latest
+IMG ?= docker.io/rokibulhasan114/license-proxyserver-addon:latest
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -67,7 +67,7 @@ deploy-crd: ## Apply flux config crd
 
 .PHONY: deploy-helm
 deploy-helm:
-	make docker-push-to-kind
+	make docker-push
 	make undeploy-helm --ignore-errors
 	make deploy-crd --ignore-errors
 	cd deploy/helm/license-proxyserver-addon-manager && helm install license-proxyserver-addon-manager . --namespace kubeops --create-namespace

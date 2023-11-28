@@ -74,6 +74,7 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 	agent, err := addonfactory.NewAgentAddonFactory(AddonName, FS, AgentManifestsDir).
 		WithScheme(scheme).
 		WithConfigGVRs(
+			schema.GroupVersionResource{Version: "v1", Resource: "secrets"},
 			schema.GroupVersionResource{Group: LicenseProxyServerConfigGroup, Version: LicenseProxyServerConfigVersion, Resource: LicenseProxyServerConfigResource},
 		).
 		WithGetValuesFuncs(GetConfigValues(kubeClient)).
