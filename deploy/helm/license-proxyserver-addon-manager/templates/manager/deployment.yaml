@@ -16,5 +16,5 @@ spec:
       serviceAccountName: license-proxyserver-addon-manager
       containers:
         - name: license-proxyserver-addon-manager
-          image: docker.io/rokibulhasan114/license-proxyserver-addon:latest
-          imagePullPolicy: Always
+          image: ghcr.io/kluster-manager/license-proxyserver-addon:latest
+          imagePullPolicy: IfNotPresent
