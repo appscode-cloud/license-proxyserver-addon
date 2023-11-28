@@ -3,6 +3,8 @@ package manager
 import (
 	"context"
 	"embed"
+	"os"
+
 	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/controller"
 	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/rbac"
 	"github.com/spf13/cobra"
@@ -16,8 +18,6 @@ import (
 	"open-cluster-management.io/addon-framework/pkg/agent"
 	cmdfactory "open-cluster-management.io/addon-framework/pkg/cmd/factory"
 	"open-cluster-management.io/api/addon/v1alpha1"
-	_ "open-cluster-management.io/api/addon/v1alpha1"
-	"os"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
