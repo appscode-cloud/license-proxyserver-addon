@@ -99,7 +99,7 @@ func licenseHelper(ctx context.Context, HubClient client.Client, cid string, fea
 		// get secret
 		sec := v1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "license-proxyserver-addon-manager-licenses",
+				Name:      "license-proxyserver-licenses",
 				Namespace: clusterName,
 			},
 		}
