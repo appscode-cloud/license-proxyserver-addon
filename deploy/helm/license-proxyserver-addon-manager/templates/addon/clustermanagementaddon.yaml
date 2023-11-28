@@ -1,7 +1,7 @@
 apiVersion: addon.open-cluster-management.io/v1alpha1
 kind: ClusterManagementAddOn
 metadata:
-  name: license-proxyserver-addon-manager
+  name: license-proxyserver
   annotations:
     addon.open-cluster-management.io/lifecycle: "addon-manager"
 spec:

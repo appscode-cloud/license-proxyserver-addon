@@ -22,13 +22,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-//go:embed agent-manifests
-//go:embed agent-manifests/license-proxyserver
-//go:embed agent-manifests/license-proxyserver/templates/_helpers.tpl
+//go:embed all:agent-manifests
 var FS embed.FS
 
 const (
-	AddonName                  = "license-proxyserver-addon-manager"
+	AddonName                  = "license-proxyserver"
+	AgentName                  = "license-proxyserver"
 	AgentManifestsDir          = "agent-manifests/license-proxyserver"
 	AddonInstallationNamespace = "kubeops"
 )
@@ -37,7 +36,7 @@ func NewRegistrationOption(kubeConfig *rest.Config, addonName, agentName string)
 	return &agent.RegistrationOption{
 		CSRConfigurations: agent.KubeClientSignerConfigurations(addonName, agentName),
 		CSRApproveCheck:   agent.ApprovalAllCSRs,
-		PermissionConfig:  rbac.SetupPermission(kubeConfig),
+		PermissionConfig:  rbac.SetupPermission(kubeConfig, agentName),
 		AgentInstallNamespace: func(addon *v1alpha1.ManagedClusterAddOn) string {
 			return AddonInstallationNamespace
 		},
@@ -62,10 +61,7 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 		return err
 	}
 
-	registrationOption := NewRegistrationOption(
-		kubeConfig,
-		AddonName,
-		"license-proxyserver-addon-manager")
+	registrationOption := NewRegistrationOption(kubeConfig, AddonName, AgentName)
 
 	mgr, err := addonmanager.New(kubeConfig)
 	if err != nil {
@@ -75,13 +71,11 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 		WithScheme(scheme).
 		WithConfigGVRs(
 			schema.GroupVersionResource{Version: "v1", Resource: "secrets"},
-			schema.GroupVersionResource{Group: LicenseProxyServerConfigGroup, Version: LicenseProxyServerConfigVersion, Resource: LicenseProxyServerConfigResource},
 		).
 		WithGetValuesFuncs(GetConfigValues(kubeClient)).
 		WithAgentRegistrationOption(registrationOption).
 		WithAgentHealthProber(agentHealthProber()).
 		WithAgentInstallNamespace(func(addon *v1alpha1.ManagedClusterAddOn) string { return AddonInstallationNamespace }).
-		WithCreateAgentInstallNamespace().
 		BuildHelmAgentAddon()
 	if err != nil {
 		klog.Error("Failed to build agent: `%v`", err)

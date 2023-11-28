@@ -71,7 +71,7 @@ deploy-helm:
 	make undeploy-helm --ignore-errors
 	kubectl wait --for=delete namespace/license-proxyserver-addon --timeout=300s
 	make deploy-crd --ignore-errors
-	cd deploy/helm/license-proxyserver-addon-manager && helm install license-proxyserver-addon-manager . --namespace open-cluster-management --create-namespace
+	cd deploy/helm/license-proxyserver-addon-manager && helm upgrade -i license-proxyserver-addon-manager . --namespace open-cluster-management --create-namespace
 
 .PHONY: deploy-to-kind
 deploy-to-kind:
@@ -79,7 +79,7 @@ deploy-to-kind:
 	make undeploy-helm --ignore-errors
 	kubectl wait --for=delete namespace/license-proxyserver-addon --timeout=300s
 	make deploy-crd --ignore-errors
-	cd deploy/helm/license-proxyserver-addon-manager && helm install license-proxyserver-addon-manager . --namespace open-cluster-management --create-namespace
+	cd deploy/helm/license-proxyserver-addon-manager && helm upgrade -i license-proxyserver-addon-manager . --namespace open-cluster-management --create-namespace
 
 .PHONY: undeploy-helm
 undeploy-helm:

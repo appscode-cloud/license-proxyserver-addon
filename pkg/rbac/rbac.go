@@ -14,14 +14,14 @@ import (
 	clusterv1 "open-cluster-management.io/api/cluster/v1"
 )
 
-func SetupPermission(kubeConfig *rest.Config) agent.PermissionConfigFunc {
+func SetupPermission(kubeConfig *rest.Config, agentName string) agent.PermissionConfigFunc {
 	return func(cluster *clusterv1.ManagedCluster, addon *addonapiv1alpha1.ManagedClusterAddOn) error {
 		nativeClient, err := kubernetes.NewForConfig(kubeConfig)
 		if err != nil {
 			return err
 		}
 		namespace := cluster.Name
-		agentUser := "system:open-cluster-management:cluster:" + cluster.Name + ":addon:license-proxyserver-addon-manager:agent:license-proxyserver-addon-manager"
+		agentUser := agent.DefaultUser(cluster.Name, addon.Name, agentName)
 
 		role := &rbacv1.Role{
 			ObjectMeta: metav1.ObjectMeta{

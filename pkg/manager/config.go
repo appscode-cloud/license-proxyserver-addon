@@ -23,15 +23,6 @@ import (
 )
 
 const (
-	// LicenseProxyServerConfigVersion defines the API version used for LicenseProxyServerConfig.
-	LicenseProxyServerConfigVersion = "v1alpha1"
-
-	// LicenseProxyServerConfigResource is the resource name for LicenseProxyServerConfig objects.
-	LicenseProxyServerConfigResource = "licenseproxyserverconfigs"
-
-	// LicenseProxyServerConfigGroup is the group name for LicenseProxyServerConfig objects.
-	LicenseProxyServerConfigGroup = "licenses.appscode.com.open-cluster-management.io"
-
 	ConfigName = "license-proxyserver-config"
 
 	ConfigNamespace = "license-proxyserver-addon"
@@ -75,7 +66,8 @@ func GetConfigValues(kc client.Client) addonfactory.GetValuesFunc {
 			return nil, err
 		}
 
-		return addonfactory.MergeValues(overrideValues, values), nil
+		vals := addonfactory.MergeValues(values, overrideValues)
+		return vals, nil
 	}
 }
 

@@ -37,7 +37,7 @@ spec:
         securityContext:
           {{- toYaml .Values.image.securityContext | nindent 10 }}
         #image: {{ include "image.registry" . }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
-        image: rokibulhasan114/license-proxyserver:addon_linux_amd64
+        image: ghcr.io/appscodeci/license-proxyserver:addon_linux_amd64
         imagePullPolicy: {{ .Values.imagePullPolicy  }}
         #imagePullPolicy: Always
         args:

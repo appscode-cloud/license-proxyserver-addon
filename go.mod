@@ -2,7 +2,7 @@ module github.com/RokibulHasan7/license-proxyserver-addon
 
 go 1.20
 
-replace open-cluster-management.io/addon-framework => github.com/kluster-manager/addon-framework v0.8.1-0.20231127184829-1a7580e0329b
+replace open-cluster-management.io/addon-framework => github.com/kluster-manager/addon-framework v0.8.1-0.20231128085803-72e3ca236234
 
 require (
 	github.com/fluxcd/helm-controller/api v0.36.2
@@ -10,7 +10,6 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	go.bytebuilders.dev/license-verifier v0.13.4
-	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.28.3
 	k8s.io/apimachinery v0.28.3
 	k8s.io/client-go v0.28.3
@@ -21,6 +20,7 @@ require (
 	open-cluster-management.io/addon-framework v0.8.1-0.20231102082339-51742bc299f2
 	open-cluster-management.io/api v0.12.1-0.20231027024433-bab1208e6889
 	sigs.k8s.io/controller-runtime v0.16.3
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
@@ -120,6 +120,7 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	helm.sh/helm/v3 v3.11.1 // indirect
 	k8s.io/apiextensions-apiserver v0.28.3 // indirect
@@ -129,7 +130,6 @@ require (
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.3.0 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
 //replace open-cluster-management.io/api => github.com/kluster-manager/api v0.12.1-0.20231011073021-f3150f61286d
