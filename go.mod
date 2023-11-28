@@ -2,7 +2,7 @@ module github.com/RokibulHasan7/license-proxyserver-addon
 
 go 1.20
 
-//replace open-cluster-management.io/addon-framework => github.com/kluster-manager/addon-framework v0.8.1-0.20231105031231-5294acb46542
+replace open-cluster-management.io/addon-framework => github.com/kluster-manager/addon-framework v0.8.1-0.20231127184829-1a7580e0329b
 
 require (
 	github.com/fluxcd/helm-controller/api v0.36.2

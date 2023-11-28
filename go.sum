@@ -240,6 +240,8 @@ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1
 github.com/jstemmer/go-junit-report v0.9.1/go.mod h1:Brl9GWCQeLvo8nXZwPNNblvFj/XSXhF0NWZEnDohbsk=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+github.com/kluster-manager/addon-framework v0.8.1-0.20231127184829-1a7580e0329b h1:hzTvFwKRIE15llNwnsRh1Amwi6kXFhRbyT0e/JHorBw=
+github.com/kluster-manager/addon-framework v0.8.1-0.20231127184829-1a7580e0329b/go.mod h1:aj97pgpGJ0/LpQzBVtU2oDFqqIiZLOPnsjLKG/sVkFw=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
@@ -718,8 +720,6 @@ k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 h1:LyMgNKD2P8Wn1iAwQU5Ohx
 k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9/go.mod h1:wZK2AVp1uHCp4VamDVgBP2COHZjqD1T68Rf0CM3YjSM=
 k8s.io/utils v0.0.0-20230726121419-3b25d923346b h1:sgn3ZU783SCgtaSJjpcVVlRqd6GSnlTLKgpAAttJvpI=
 k8s.io/utils v0.0.0-20230726121419-3b25d923346b/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
-open-cluster-management.io/addon-framework v0.8.1-0.20231102082339-51742bc299f2 h1:38vY9paEGugvXfYGJ0oFabL4/8Jxrg+GnxxjUO2DMio=
-open-cluster-management.io/addon-framework v0.8.1-0.20231102082339-51742bc299f2/go.mod h1:aj97pgpGJ0/LpQzBVtU2oDFqqIiZLOPnsjLKG/sVkFw=
 open-cluster-management.io/api v0.12.1-0.20231027024433-bab1208e6889 h1:U57ynNMUY6umxZq9F+rLiVqjwky2eXMSHEk5mAtwau0=
 open-cluster-management.io/api v0.12.1-0.20231027024433-bab1208e6889/go.mod h1:RaKSNLO1I3xYfvIwIcCxFYgIUp3NOseG0xoGfReBEPw=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=

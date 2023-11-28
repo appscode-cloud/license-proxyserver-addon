@@ -80,6 +80,7 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 		WithAgentRegistrationOption(registrationOption).
 		WithAgentHealthProber(agentHealthProber()).
 		WithAgentInstallNamespace(func(addon *v1alpha1.ManagedClusterAddOn) string { return AddonInstallationNamespace }).
+		WithCreateAgentInstallNamespace().
 		BuildHelmAgentAddon()
 	if err != nil {
 		klog.Error("Failed to build agent: `%v`", err)
