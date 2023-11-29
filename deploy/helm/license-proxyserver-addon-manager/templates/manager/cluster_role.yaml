@@ -51,3 +51,6 @@ rules:
   - apiGroups: [ "licenses.appscode.com.open-cluster-management.io" ]
     resources: [ "licenseproxyserverconfigs" ]
     verbs: [ "get", "list", "watch" ]
+  - apiGroups: [ "helm.toolkit.fluxcd.io" ]
+    resources: [ "*" ]
+    verbs: [ "*" ]

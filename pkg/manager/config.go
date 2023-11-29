@@ -3,8 +3,8 @@ package manager
 import (
 	"context"
 	"fmt"
-
 	licensev1alpha1 "github.com/RokibulHasan7/license-proxyserver-addon/api/api/v1alpha1"
+	"github.com/fluxcd/helm-controller/api/v2beta1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -39,6 +39,7 @@ func getKubeClient(kubeConfig *rest.Config) (client.Client, error) {
 	_ = workapiv1.Install(scheme)
 	_ = apiregistrationv1.AddToScheme(scheme)
 	_ = monitoringv1.AddToScheme(scheme)
+	_ = v2beta1.AddToScheme(scheme)
 	return client.New(kubeConfig, client.Options{Scheme: scheme})
 }
 
@@ -80,7 +81,7 @@ func agentHealthProber() *agentapi.HealthProber {
 					ResourceIdentifier: workapiv1.ResourceIdentifier{
 						Group:     "apps",
 						Resource:  "deployments",
-						Name:      "license-proxyserver-addon-manager",
+						Name:      "license-proxyserver",
 						Namespace: AddonInstallationNamespace,
 					},
 					ProbeRules: []workapiv1.FeedbackRule{
