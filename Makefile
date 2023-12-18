@@ -67,11 +67,20 @@ deploy-crd: ## Apply flux config crd
 
 .PHONY: deploy-helm
 deploy-helm:
+	make docker-push
+	make undeploy-helm --ignore-errors
+	kubectl wait --for=delete namespace/license-proxyserver-addon --timeout=300s
+	make deploy-crd --ignore-errors
+	cd deploy/helm/license-proxyserver-addon-manager && helm upgrade -i license-proxyserver-addon-manager . --namespace open-cluster-management --create-namespace
+
+.PHONY: deploy-to-kind
+deploy-to-kind:
 	make docker-push-to-kind
 	make undeploy-helm --ignore-errors
+	kubectl wait --for=delete namespace/license-proxyserver-addon --timeout=300s
 	make deploy-crd --ignore-errors
-	cd deploy/helm/license-proxyserver-addon-manager && helm install license-proxyserver-addon-manager . --namespace kubeops --create-namespace
+	cd deploy/helm/license-proxyserver-addon-manager && helm upgrade -i license-proxyserver-addon-manager . --namespace open-cluster-management --create-namespace
 
 .PHONY: undeploy-helm
 undeploy-helm:
-	helm uninstall license-proxyserver-addon-manager -n kubeops
+	helm uninstall license-proxyserver-addon-manager -n open-cluster-management

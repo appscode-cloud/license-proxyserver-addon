@@ -1,7 +1,7 @@
 apiVersion: work.open-cluster-management.io/v1alpha1
 kind: ManifestWorkReplicaSet
 metadata:
-  name: license-proxyserver-addon-work-agent-roles
+  name: license-addon-agent-roles
   namespace: license-proxyserver-addon
 spec:
   placementRefs:

@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	licensev1alpha1 "github.com/RokibulHasan7/license-proxyserver-addon/api/api/v1alpha1"
+	"github.com/fluxcd/helm-controller/api/v2beta1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/rest"
 	apiregistrationv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
@@ -18,17 +19,13 @@ import (
 	ocm "open-cluster-management.io/api/cluster/v1alpha1"
 	workapiv1 "open-cluster-management.io/api/work/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/yaml"
 )
 
 const (
-	// LicenseProxyServerConfigVersion defines the API version used for LicenseProxyServerConfig.
-	LicenseProxyServerConfigVersion = "v1alpha1"
+	ConfigName = "license-proxyserver-config"
 
-	// LicenseProxyServerConfigResource is the resource name for LicenseProxyServerConfig objects.
-	LicenseProxyServerConfigResource = "licenseproxyserverconfigs"
-
-	// LicenseProxyServerConfigGroup is the group name for LicenseProxyServerConfig objects.
-	LicenseProxyServerConfigGroup = "licenses.appscode.com.open-cluster-management.io"
+	ConfigNamespace = "license-proxyserver-addon"
 )
 
 var (
@@ -42,35 +39,36 @@ func getKubeClient(kubeConfig *rest.Config) (client.Client, error) {
 	_ = workapiv1.Install(scheme)
 	_ = apiregistrationv1.AddToScheme(scheme)
 	_ = monitoringv1.AddToScheme(scheme)
+	_ = v2beta1.AddToScheme(scheme)
 	return client.New(kubeConfig, client.Options{Scheme: scheme})
 }
 
 func GetConfigValues(kc client.Client) addonfactory.GetValuesFunc {
 	return func(cluster *clusterv1.ManagedCluster, addon *v1alpha1.ManagedClusterAddOn) (addonfactory.Values, error) {
-		overrideValues := addonfactory.Values{}
-
-		//for _, refConfig := range addon.Status.ConfigReferences {
-		//	if refConfig.ConfigGroupResource.Group != LicenseProxyServerConfigGroup ||
-		//		refConfig.ConfigGroupResource.Resource != LicenseProxyServerConfigResource {
-		//		continue
-		//	}
-
-		lcConfig := licensev1alpha1.LicenseProxyServerConfig{}
-		keyType := types.NamespacedName{Name: "licenseproxyserverconfig", Namespace: "open-cluster-management"}
-
-		if err := kc.Get(context.TODO(), keyType, &lcConfig); err != nil {
+		var config v1.Secret
+		if err := kc.Get(context.TODO(), client.ObjectKey{Name: ConfigName, Namespace: ConfigNamespace}, &config); err != nil {
 			return nil, err
 		}
 
-		lcConfigSpec := lcConfig.Spec
-		values, err := addonfactory.JsonStructToValues(lcConfigSpec)
+		var overrideValues map[string]any
+		err := yaml.Unmarshal(config.Data["values.yaml"], &overrideValues)
 		if err != nil {
 			return nil, err
 		}
-		overrideValues = addonfactory.MergeValues(overrideValues, values)
-		//}
 
-		return overrideValues, nil
+		data, err := FS.ReadFile("agent-manifests/license-proxyserver/values.yaml")
+		if err != nil {
+			return nil, err
+		}
+
+		var values map[string]any
+		err = yaml.Unmarshal(data, &values)
+		if err != nil {
+			return nil, err
+		}
+
+		vals := addonfactory.MergeValues(values, overrideValues)
+		return vals, nil
 	}
 }
 
@@ -83,7 +81,7 @@ func agentHealthProber() *agentapi.HealthProber {
 					ResourceIdentifier: workapiv1.ResourceIdentifier{
 						Group:     "apps",
 						Resource:  "deployments",
-						Name:      "license-proxyserver-addon-manager",
+						Name:      "license-proxyserver",
 						Namespace: AddonInstallationNamespace,
 					},
 					ProbeRules: []workapiv1.FeedbackRule{

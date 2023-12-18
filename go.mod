@@ -2,7 +2,7 @@ module github.com/RokibulHasan7/license-proxyserver-addon
 
 go 1.20
 
-replace open-cluster-management.io/addon-framework => github.com/kluster-manager/addon-framework v0.8.1-0.20231128042508-4648a008b81f
+replace open-cluster-management.io/addon-framework => github.com/kluster-manager/addon-framework v0.8.1-0.20231128110641-c37ccbb8ff80
 
 require (
 	github.com/fluxcd/helm-controller/api v0.36.2
@@ -20,6 +20,7 @@ require (
 	open-cluster-management.io/addon-framework v0.8.1-0.20231102082339-51742bc299f2
 	open-cluster-management.io/api v0.12.1-0.20231027024433-bab1208e6889
 	sigs.k8s.io/controller-runtime v0.16.3
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
@@ -129,7 +130,6 @@ require (
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.1.2 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.3.0 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
 //replace open-cluster-management.io/api => github.com/kluster-manager/api v0.12.1-0.20231011073021-f3150f61286d

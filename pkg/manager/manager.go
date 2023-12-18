@@ -3,6 +3,8 @@ package manager
 import (
 	"context"
 	"embed"
+	"os"
+
 	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/controller"
 	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/rbac"
 	"github.com/spf13/cobra"
@@ -16,19 +18,16 @@ import (
 	"open-cluster-management.io/addon-framework/pkg/agent"
 	cmdfactory "open-cluster-management.io/addon-framework/pkg/cmd/factory"
 	"open-cluster-management.io/api/addon/v1alpha1"
-	_ "open-cluster-management.io/api/addon/v1alpha1"
-	"os"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-//go:embed agent-manifests
-//go:embed agent-manifests/license-proxyserver
-//go:embed agent-manifests/license-proxyserver/templates/_helpers.tpl
+//go:embed all:agent-manifests
 var FS embed.FS
 
 const (
-	AddonName                  = "license-proxyserver-addon-manager"
+	AddonName                  = "license-proxyserver"
+	AgentName                  = "license-proxyserver"
 	AgentManifestsDir          = "agent-manifests/license-proxyserver"
 	AddonInstallationNamespace = "kubeops"
 )
@@ -37,7 +36,7 @@ func NewRegistrationOption(kubeConfig *rest.Config, addonName, agentName string)
 	return &agent.RegistrationOption{
 		CSRConfigurations: agent.KubeClientSignerConfigurations(addonName, agentName),
 		CSRApproveCheck:   agent.ApprovalAllCSRs,
-		PermissionConfig:  rbac.SetupPermission(kubeConfig),
+		PermissionConfig:  rbac.SetupPermission(kubeConfig, agentName),
 		AgentInstallNamespace: func(addon *v1alpha1.ManagedClusterAddOn) string {
 			return AddonInstallationNamespace
 		},
@@ -62,10 +61,7 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 		return err
 	}
 
-	registrationOption := NewRegistrationOption(
-		kubeConfig,
-		AddonName,
-		"license-proxyserver-addon-manager")
+	registrationOption := NewRegistrationOption(kubeConfig, AddonName, AgentName)
 
 	mgr, err := addonmanager.New(kubeConfig)
 	if err != nil {
@@ -74,7 +70,7 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 	agent, err := addonfactory.NewAgentAddonFactory(AddonName, FS, AgentManifestsDir).
 		WithScheme(scheme).
 		WithConfigGVRs(
-			schema.GroupVersionResource{Group: LicenseProxyServerConfigGroup, Version: LicenseProxyServerConfigVersion, Resource: LicenseProxyServerConfigResource},
+			schema.GroupVersionResource{Version: "v1", Resource: "secrets"},
 		).
 		WithGetValuesFuncs(GetConfigValues(kubeClient)).
 		WithAgentRegistrationOption(registrationOption).

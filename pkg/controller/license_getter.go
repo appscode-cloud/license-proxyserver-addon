@@ -14,13 +14,20 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/utils/clock"
 	ocmv1 "open-cluster-management.io/api/cluster/v1"
-	ocm "open-cluster-management.io/api/cluster/v1alpha1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"strings"
+)
+
+const (
+	ClusterClaimClusterID             = "id.k8s.io"
+	ClusterClaimLicense               = "licenses.appscode.com"
+	LicenseSecret                     = "license-proxyserver-licenses"
+	LicenseProxyServerHelmReleaseName = "license-proxyserver"
+	LicenseProxyServerNamespace       = "kubeops"
 )
 
 func NewLicenseReconciler(hubClient client.Client) *LicenseReconciler {
@@ -53,34 +60,32 @@ func (r *LicenseReconciler) Reconcile(ctx context.Context, request reconcile.Req
 	}
 
 	if len(managed.Status.ClusterClaims) > 1 {
-		cc := ocm.ClusterClaim{}
-		err := r.HubClient.Get(context.TODO(), client.ObjectKey{Name: "id.k8s.io"}, &cc)
-		if err != nil {
-			return reconcile.Result{}, err
+		var cid string
+		var features []string
+
+		for _, claim := range managed.Status.ClusterClaims {
+			if claim.Name == ClusterClaimClusterID {
+				cid = claim.Value
+			}
+			if claim.Name == ClusterClaimLicense {
+				features = strings.Split(claim.Value, ",")
+			}
 		}
 
-		cid := cc.Spec.Value
-
-		err = r.HubClient.Get(context.TODO(), client.ObjectKey{Name: "licenses.appscode.com"}, &cc)
-		if err != nil {
-			return reconcile.Result{}, err
-		}
-
-		features := strings.Split(cc.Spec.Value, ",")
 		err = licenseHelper(ctx, r.HubClient, cid, features, managed.Name)
 		if err != nil {
 			return reconcile.Result{}, err
 		}
 	}
 
-	return reconcile.Result{}, err
+	return reconcile.Result{}, nil
 }
 
 func licenseHelper(ctx context.Context, HubClient client.Client, cid string, features []string, clusterName string) error {
 	lps := v2beta1.HelmRelease{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "license-proxyserver",
-			Namespace: "kubeops",
+			Name:      LicenseProxyServerHelmReleaseName,
+			Namespace: LicenseProxyServerNamespace,
 		},
 	}
 
@@ -99,14 +104,21 @@ func licenseHelper(ctx context.Context, HubClient client.Client, cid string, fea
 		// get secret
 		sec := v1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "license-proxyserver-addon-manager-licenses",
+				Name:      LicenseSecret,
 				Namespace: clusterName,
 			},
 		}
-		err = HubClient.Get(context.TODO(), client.ObjectKey{Name: sec.Name}, &sec)
-		if err != nil && kerr.IsNotFound(err) {
+		err = HubClient.Get(context.TODO(), client.ObjectKey{Name: sec.Name, Namespace: sec.Namespace}, &sec)
+		if err == nil {
+			// update secret
+			sec.Data[l.PlanName] = l.Data
+			err = HubClient.Update(context.TODO(), &sec)
+			if err != nil {
+				return err
+			}
+		} else if err != nil && kerr.IsNotFound(err) {
 			// create secret
-			var data map[string][]byte
+			data := make(map[string][]byte)
 			data[l.PlanName] = l.Data
 			sec.Data = data
 			err = HubClient.Create(ctx, &sec)
@@ -119,12 +131,6 @@ func licenseHelper(ctx context.Context, HubClient client.Client, cid string, fea
 			return err
 		}
 
-		// update secret
-		sec.Data[l.PlanName] = l.Data
-		err = HubClient.Update(context.TODO(), &sec)
-		if err != nil {
-			return err
-		}
 		return nil
 	}
 
