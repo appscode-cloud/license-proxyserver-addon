@@ -5,9 +5,9 @@ import (
 	"embed"
 	"os"
 
-	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/controller"
-	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/rbac"
 	"github.com/spf13/cobra"
+	"go.bytebuilders.dev/license-proxyserver-addon/pkg/controller"
+	"go.bytebuilders.dev/license-proxyserver-addon/pkg/rbac"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/rest"
 	"k8s.io/component-base/version"

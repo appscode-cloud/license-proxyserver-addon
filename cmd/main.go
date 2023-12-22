@@ -3,7 +3,7 @@ package main
 import (
 	goflag "flag"
 	"fmt"
-	"github.com/RokibulHasan7/license-proxyserver-addon/pkg/manager"
+	"go.bytebuilders.dev/license-proxyserver-addon/pkg/manager"
 	"os"
 	"time"
 

@@ -3,12 +3,10 @@ package manager
 import (
 	"context"
 	"fmt"
-	licensev1alpha1 "github.com/RokibulHasan7/license-proxyserver-addon/api/api/v1alpha1"
 	"github.com/fluxcd/helm-controller/api/v2beta1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/rest"
 	apiregistrationv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 	"open-cluster-management.io/addon-framework/pkg/addonfactory"
@@ -33,7 +31,6 @@ var (
 )
 
 func getKubeClient(kubeConfig *rest.Config) (client.Client, error) {
-	utilruntime.Must(licensev1alpha1.AddToScheme(scheme))
 	_ = ocm.Install(scheme)
 	_ = ocmv1.Install(scheme)
 	_ = workapiv1.Install(scheme)

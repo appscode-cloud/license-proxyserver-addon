@@ -1,4 +1,4 @@
-module github.com/RokibulHasan7/license-proxyserver-addon
+module go.bytebuilders.dev/license-proxyserver-addon
 
 go 1.20
 
