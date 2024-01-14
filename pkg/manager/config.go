@@ -24,7 +24,6 @@ import (
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/rest"
 	apiregistrationv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 	"open-cluster-management.io/addon-framework/pkg/addonfactory"
 	agentapi "open-cluster-management.io/addon-framework/pkg/agent"
@@ -45,14 +44,13 @@ const (
 
 var scheme = runtime.NewScheme()
 
-func getKubeClient(kubeConfig *rest.Config) (client.Client, error) {
+func init() {
 	_ = ocm.Install(scheme)
 	_ = ocmv1.Install(scheme)
 	_ = workapiv1.Install(scheme)
 	_ = apiregistrationv1.AddToScheme(scheme)
 	_ = monitoringv1.AddToScheme(scheme)
 	_ = v2beta1.AddToScheme(scheme)
-	return client.New(kubeConfig, client.Options{Scheme: scheme})
 }
 
 func GetConfigValues(kc client.Client) addonfactory.GetValuesFunc {

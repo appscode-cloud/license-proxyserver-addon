@@ -419,7 +419,7 @@ type ListOptions struct {
 	LabelSelector labels.Selector
 	// FieldSelector filters results by a particular field.  In order
 	// to use this with cache-based implementations, restrict usage to
-	// a single field-value pair that's been added to the indexers.
+	// exact match field-value pair that's been added to the indexers.
 	FieldSelector fields.Selector
 
 	// Namespace represents the namespace to list for, or empty for
@@ -514,7 +514,8 @@ type MatchingLabels map[string]string
 func (m MatchingLabels) ApplyToList(opts *ListOptions) {
 	// TODO(directxman12): can we avoid reserializing this over and over?
 	if opts.LabelSelector == nil {
-		opts.LabelSelector = labels.NewSelector()
+		opts.LabelSelector = labels.SelectorFromValidatedSet(map[string]string(m))
+		return
 	}
 	// If there's already a selector, we need to AND the two together.
 	noValidSel := labels.SelectorFromValidatedSet(map[string]string(m))
@@ -746,6 +747,9 @@ type PatchOptions struct {
 
 	// Raw represents raw PatchOptions, as passed to the API server.
 	Raw *metav1.PatchOptions
+
+	// SendEmptyPatch is going to send empty patch calls to the API server.
+	SendEmptyPatch bool
 }
 
 // ApplyOptions applies the given patch options on these options,
@@ -806,6 +810,16 @@ func (forceOwnership) ApplyToPatch(opts *PatchOptions) {
 func (forceOwnership) ApplyToSubResourcePatch(opts *SubResourcePatchOptions) {
 	definitelyTrue := true
 	opts.Force = &definitelyTrue
+}
+
+// SendEmptyPatch sets the "sendEmptyPatch" option to true.
+var SendEmptyPatch = sendEmptyPatch{}
+
+type sendEmptyPatch struct{}
+
+// ApplyToPatch applies this configuration to the given patch options.
+func (sendEmptyPatch) ApplyToPatch(opts *PatchOptions) {
+	opts.SendEmptyPatch = true
 }
 
 // }}}

@@ -70,17 +70,26 @@ func NewManagerCommand() *cobra.Command {
 	return cmd
 }
 
-func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
+func runManagerController(ctx context.Context, cfg *rest.Config) error {
 	log.SetLogger(klogr.New()) // nolint:staticcheck
-	kubeClient, err := getKubeClient(kubeConfig)
+
+	m, err := ctrl.NewManager(cfg, ctrl.Options{
+		Scheme: scheme,
+	})
 	if err != nil {
-		klog.Errorf("Creating kube client failed: `%v`", err)
 		return err
 	}
 
-	registrationOption := NewRegistrationOption(kubeConfig, AddonName, AgentName)
+	if err := (controller.NewLicenseReconciler(
+		m.GetClient(),
+	)).SetupWithManager(m); err != nil {
+		klog.Error(err, "unable to register LicenseReconciler")
+		os.Exit(1)
+	}
 
-	mgr, err := addonmanager.New(kubeConfig)
+	registrationOption := NewRegistrationOption(cfg, AddonName, AgentName)
+
+	mgr, err := addonmanager.New(cfg)
 	if err != nil {
 		return err
 	}
@@ -89,14 +98,14 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 		WithConfigGVRs(
 			schema.GroupVersionResource{Version: "v1", Resource: "secrets"},
 		).
-		WithGetValuesFuncs(GetConfigValues(kubeClient)).
+		WithGetValuesFuncs(GetConfigValues(m.GetClient())).
 		WithAgentRegistrationOption(registrationOption).
 		WithAgentHealthProber(agentHealthProber()).
 		WithAgentInstallNamespace(func(addon *v1alpha1.ManagedClusterAddOn) string { return AddonInstallationNamespace }).
 		WithCreateAgentInstallNamespace().
 		BuildHelmAgentAddon()
 	if err != nil {
-		klog.Error("Failed to build agent: `%v`", err)
+		klog.Errorf("Failed to build agent: `%v`", err)
 		return err
 	}
 
@@ -104,19 +113,8 @@ func runManagerController(ctx context.Context, kubeConfig *rest.Config) error {
 		return err
 	}
 
-	m, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme: scheme,
-	})
-	if err := (controller.NewLicenseReconciler(
-		kubeClient,
-	)).SetupWithManager(m); err != nil {
-		klog.Error(err, "unable to register LicenseReconciler")
-		os.Exit(1)
-	}
-
-	go mgr.Start(ctx)
-	go m.Start(ctx)
-	<-ctx.Done()
-
-	return nil
+	go func() {
+		_ = mgr.Start(ctx)
+	}()
+	return m.Start(ctx)
 }
