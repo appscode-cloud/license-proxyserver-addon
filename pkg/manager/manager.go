@@ -19,10 +19,9 @@ package manager
 import (
 	"context"
 	"embed"
+	"go.bytebuilder.dev/license-proxyserver-addon/pkg/manager/controller"
+	"go.bytebuilder.dev/license-proxyserver-addon/pkg/manager/rbac"
 	"os"
-
-	"go.bytebuilder.dev/license-proxyserver-addon/pkg/controller"
-	"go.bytebuilder.dev/license-proxyserver-addon/pkg/rbac"
 
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime/schema"
